@@ -8,16 +8,17 @@
       :height="500"
       :delay="100"
       :draggable="true">
-    <h1>Add new Tag</h1>
+    <h1 v-if="this.home.isAdd">Add new Tag</h1>
+    <h1 v-else>Modify this tag</h1>
     <h3>Input URL</h3>
     <input v-model="urlinput" required/>
     <h3>Input Title</h3>
     <input v-model="titleinput" required/>
-    <h3>Add a logo</h3>
-    <input/>
+    <h3>Choose a logo</h3>
+    <!-- <img :src="this.home.metascraper(this.urlinput).image"> -->
     <div class="two-button">
       <button @click="$emit('close')">Cancel</button>
-      <button @click="AddNewTag">Yes</button>
+      <button @click="AddNewTag">Confirm</button>
     </div>
   </modal>
 </template>
@@ -37,10 +38,14 @@ export default {
       }
     }
   },
+  mounted () {
+  },
   methods: {
     AddNewTag () {
+      this.home.url = this.urlinput
       this.tag.adrs = this.urlinput
-      this.tag.name = this.titleinput
+      // this.tag.name = this.home.metascraper(this.urlinput).title
+      // this.tag.img = this.home.metascraper(this.urlinput).image
       this.home.tags.push(this.tag)
       this.home.$modal.hide('myModal')
       this.urlinput = ''
