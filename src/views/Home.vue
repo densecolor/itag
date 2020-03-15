@@ -2,18 +2,14 @@
   <div class="home">
     <div class="container" ref="container" :style="gridStyle">
       <tag
-        v-for="tag in tags"
-        :key="tag.id"
+        v-for="(tag, index) in tags"
+        :key="index"
         :tag="tag"
         class="item"
-      >
-      </tag>
-      <v-dialog/>
+      />
+      <v-dialog />
       <my-modal @close="closeMyModal"/>
-      <button
-        class="btn"
-        @click="createNewTag"
-        >+</button>
+      <button class="btn" @click="createNewTag">+</button>
     </div>
   </div>
 </template>
@@ -38,24 +34,25 @@ export default {
   data: function () {
     return {
       tags: [
-        {
-          id: 1,
-          name: 'google',
-          img: require('@/assets/google.svg'),
-          adrs: 'http://www.google.com'
-        },
-        {
-          id: 2,
-          name: 'bing',
-          img: require('@/assets/bing.svg'),
-          adrs: 'http://www.bing.com'
-        }
+        // {
+        //   id: 1,
+        //   name: 'google',
+        //   img: require('@/assets/google.svg'),
+        //   url: 'http://www.google.com'
+        // },
+        // {
+        //   id: 2,
+        //   name: 'bing',
+        //   img: require('@/assets/bing.svg'),
+        //   url: 'http://www.bing.com'
+        // }
       ],
       isAdd: true,
-      url: 'https://www.github.com',
+      url: '',
       containerWidth: 0,
-      columnNumber: 6,
-      gridStyle: {}
+      columnNumber: 4,
+      gridStyle: {},
+      fontStyle: {}
     }
   },
   mounted () {
@@ -100,9 +97,13 @@ export default {
       this.containerWidth = this.$refs.container.offsetWidth
       const width = (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
       const height = 0.75 * width
+      const fontSize = height / 13
       this.gridStyle = {
         'grid-template-columns': `repeat(${this.columnNumber}, ${width}px)`,
         'grid-template-rows': `repeat(3, ${height}px)`
+      }
+      this.fontStyle = {
+        'font-size': `${fontSize}px`
       }
     }, 200),
     fetchMetaData () {
@@ -128,10 +129,9 @@ export default {
   width: 80%;
 }
 .btn {
-  border: 1px solid blue;
   cursor: pointer;
 }
 .item {
-  border: 1px solid blue;
+  border-radius: 10px;
 }
 </style>

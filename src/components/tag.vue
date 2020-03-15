@@ -1,11 +1,11 @@
 <template>
   <div class="tag" draggable="true">
-    <a class="hello"
-      :href="tag.adrs"
+    <a class="tag__link"
+      :href="tag.url"
       target="_blank"
       :style="imgStyle">
-      <!-- <img :src="tag.img" class="tag-img"> -->
-      <div class="tag-name">
+      <div class="tag__link--name"
+          :style="this.home.fontStyle">
         {{ tag.name }}
       </div>
     </a>
@@ -28,25 +28,18 @@ export default {
   },
   data () {
     return {
-      imgStyle: {}
+    }
+  },
+  computed: {
+    imgStyle () {
+      return {
+        'background-image': `url(${this.tag.img})`
+      }
     }
   },
   mounted () {
-    this.init()
   },
   methods: {
-    async init () {
-      const res = await this.home.fetchMetaData()
-      this.imgStyle = {
-        'background-image': `url(${res.image})`,
-        'background-size': 'cover',
-        'background-repeat': 'no-repeat',
-        'background-position': '50%',
-        height: '100%',
-        width: '100%'
-      }
-      console.log(this.imgStyle)
-    },
     deleteTag () {
       this.home.show(this.tag.id)
     },
@@ -60,13 +53,32 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.hello {
-  text-decoration: none;
-}
 .tag {
   display: flex;
   position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .33);
+  padding-bottom: 25px;
+  &__link {
+    text-decoration: none;
+    border-radius: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    height: 100%;
+    width: 100%;
+    &--name {
+      color: #000000;
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+      width: 100%;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+  }
   &:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .33);
+    cursor: pointer;
     .delete {
       display: block;
     }
@@ -142,15 +154,6 @@ export default {
         }
       }
     }
-  }
-  .tag-name {
-    color: #000000;
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    margin-bottom: 12px;
-    text-align: center;
   }
 }
 </style>

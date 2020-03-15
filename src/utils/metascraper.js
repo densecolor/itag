@@ -12,7 +12,7 @@ async function fetchMeta (targetUrl) {
   const metadata = await metascraper({ html, url })
   // console.log(html)
   // console.log(url)
-  console.log(metadata)
+  // console.log(metadata)
   return metadata
 }
 
