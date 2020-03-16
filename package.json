@@ -11,6 +11,7 @@
     "core-js": "^3.6.4",
     "dayjs": "^1.8.21",
     "dns": "^0.2.2",
+    "js-shortid": "^0.1.1",
     "lodash": "^4.17.15",
     "metascraper": "^5.11.6",
     "metascraper-image": "^5.11.6",

@@ -1,12 +1,12 @@
 <template>
   <div class="tag" draggable="true">
     <a class="tag__link"
-      :href="tag.url"
+      :href="tagProp.url"
       target="_blank"
       :style="imgStyle">
       <div class="tag__link--name"
           :style="this.home.fontStyle">
-        {{ tag.name }}
+        {{ tagProp.name }}
       </div>
     </a>
     <a class="delete" @click="deleteTag">
@@ -21,10 +21,10 @@
 
 <script>
 export default {
-  name: 'tag',
+  name: 'TagItem',
   inject: ['home'],
   props: {
-    tag: Object
+    tagProp: Object
   },
   data () {
     return {
@@ -33,7 +33,7 @@ export default {
   computed: {
     imgStyle () {
       return {
-        'background-image': `url(${this.tag.img})`
+        'background-image': `url(${this.tagProp.img})`
       }
     }
   },
@@ -41,11 +41,10 @@ export default {
   },
   methods: {
     deleteTag () {
-      this.home.show(this.tag.id)
+      this.home.show(this.tagProp.id)
     },
     modifyTag () {
-      this.home.isAdd = false
-      this.home.$modal.show('myModal')
+      this.$emit('getTagId', this.tagProp.id)
     }
   }
 }

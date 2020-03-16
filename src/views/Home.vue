@@ -1,25 +1,26 @@
 <template>
   <div class="home">
     <div class="container" ref="container" :style="gridStyle">
-      <tag
-        v-for="(tag, index) in tags"
-        :key="index"
-        :tag="tag"
+      <TagItem
+        v-for="tag in tags"
+        :key="tag.id"
+        :tag-prop="tag"
+        @getTagId="getActiveTag"
         class="item"
       />
       <v-dialog />
-      <my-modal @close="closeMyModal"/>
+      <MyModal @close="closeMyModal"/>
       <button class="btn" @click="createNewTag">+</button>
     </div>
   </div>
 </template>
 
 <script>
-import { debounce } from 'lodash'
-// @ is an alias to /src
-import tag from '@/components/tag.vue'
-import myModal from '@/components/myModal.vue'
+import { debounce, cloneDeep } from 'lodash'
+import TagItem from '@/components/TagItem.vue'
+import MyModal from '@/components/MyModal.vue'
 import metascraper from '@/utils/metascraper.js'
+
 export default {
   name: 'Home',
   provide () {
@@ -28,31 +29,19 @@ export default {
     }
   },
   components: {
-    tag,
-    myModal
+    TagItem,
+    MyModal
   },
   data: function () {
     return {
-      tags: [
-        // {
-        //   id: 1,
-        //   name: 'google',
-        //   img: require('@/assets/google.svg'),
-        //   url: 'http://www.google.com'
-        // },
-        // {
-        //   id: 2,
-        //   name: 'bing',
-        //   img: require('@/assets/bing.svg'),
-        //   url: 'http://www.bing.com'
-        // }
-      ],
+      tags: [],
       isAdd: true,
       url: '',
       containerWidth: 0,
       columnNumber: 4,
       gridStyle: {},
-      fontStyle: {}
+      fontStyle: {},
+      activeTag: {}
     }
   },
   mounted () {
@@ -108,6 +97,15 @@ export default {
     }, 200),
     fetchMetaData () {
       return metascraper(this.url)
+    },
+    getActiveTag (tagId) {
+      this.isAdd = false
+      this.$modal.show('myModal')
+      const tagIdd = (element) => element.id === tagId
+      // 使用深拷贝解决对象引用问题
+      const tags = cloneDeep(this.tags)
+      const tagIndex = tags.findIndex(tagIdd)
+      this.activeTag = tags[tagIndex]
     }
   }
 }
