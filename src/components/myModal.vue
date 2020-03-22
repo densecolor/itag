@@ -3,12 +3,13 @@
     class="my-modal"
     name="myModal"
     transition="nice-modal-fade"
-    :min-width="200"
-    :min-height="500"
-    :height="500"
+    height="auto"
     :delay="100"
     :draggable="true"
     @before-close="beforeClose">
+    <a class="cancel" @click="home.closeMyModal()">
+      <img src="@/assets/cancel.svg">
+    </a>
     <h1 v-if="home.isAdd">Add new Tag</h1>
     <h1 v-else>Modify this tag</h1>
     <h3>Input URL</h3>
@@ -21,7 +22,7 @@
     <h3>Input Title</h3>
     <input v-model="titleinput" required/>
     <h3>Choose a logo</h3>
-    <img :src="tag.img" />
+    <img class="tagImg" :src="tag.img" />
     <div class="two-button">
       <button @click="$emit('close')">Cancel</button>
       <button v-if="home.isAdd"
@@ -72,7 +73,7 @@ export default {
       this.tag.url = this.urlinput
       this.tag.name = this.titleinput
       this.home.tags.push(this.tag)
-      this.home.$modal.hide('myModal')
+      this.home.closeMyModal()
     },
     async urlBlur () {
       this.home.url = this.urlinput
@@ -97,7 +98,7 @@ export default {
       const tagIdd = (element) => element.id === this.home.activeTag.id
       const tagIndex = this.home.tags.findIndex(tagIdd)
       this.home.tags.splice(tagIndex, 1, this.tag)
-      this.home.$modal.hide('myModal')
+      this.home.closeMyModal()
     }
   }
 }
@@ -105,6 +106,7 @@ export default {
 
 <style lang="less">
 .my-modal {
+  position: relative;
   .v--modal-box.v--modal{
     display: flex;
     flex-direction: column;
@@ -116,10 +118,21 @@ export default {
     flex-direction: row;
     justify-content: space-around;
   }
-  img {
+  .tagImg {
     width: 25%;
     height: 25%;
     box-shadow: 0 0 2px;
+  }
+  .cancel {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    cursor: pointer;
+    img {
+      height: 20px;
+      width: 20px;
+      padding: 3px;
+    }
   }
 }
 </style>

@@ -1,6 +1,12 @@
 <template>
   <div class="home">
-    <div class="container" ref="container" :style="gridStyle">
+    <!-- 通过 ref 属性为子组件赋予一个 ID 引用，用来直接从javascript访问这个组件 -->
+    <Draggable
+      class="container"
+      ref="container"
+      :style="gridStyle"
+      ghost-class="ghost"
+    >
       <TagItem
         v-for="tag in tags"
         :key="tag.id"
@@ -8,10 +14,10 @@
         @getTagId="getActiveTag"
         class="item"
       />
-      <v-dialog />
-      <MyModal @close="closeMyModal"/>
-      <button class="btn" @click="createNewTag">+</button>
-    </div>
+    <button class="btn" @click="createNewTag" :style="btnStyle">+</button>
+    </Draggable>
+    <v-dialog />
+    <MyModal @close="closeMyModal"/>
   </div>
 </template>
 
@@ -20,6 +26,9 @@ import { debounce, cloneDeep } from 'lodash'
 import TagItem from '@/components/TagItem.vue'
 import MyModal from '@/components/MyModal.vue'
 import metascraper from '@/utils/metascraper.js'
+import Draggable from 'vuedraggable'
+// import VueSlider from 'vue-slider-component'
+// import 'vue-slider-component/theme/antd.css'
 
 export default {
   name: 'Home',
@@ -30,11 +39,56 @@ export default {
   },
   components: {
     TagItem,
-    MyModal
+    MyModal,
+    Draggable
+    // VueSlider
   },
   data: function () {
     return {
-      tags: [],
+      tags: [
+        {
+          id: '2bQo1FJOZSU',
+          img: 'https://gw.alipayobjects.com/zos/rmsportal/xwaMkpycAdwCBrdgyWiT.png',
+          name: '语雀',
+          url: 'http://www.yuque.com'
+        },
+        {
+          id: '2bQo1FJOZSP',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: '知乎',
+          url: 'http://www.zhihu.com'
+        },
+        {
+          id: '2bQo1FJOZSQ',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: 'github',
+          url: 'http:/ /www.zhihu.com'
+        },
+        {
+          id: '2bQo1FJOZSR',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: 'youtube',
+          url: 'http://www.zhihu.com'
+        },
+        {
+          id: '2bQo1FJOZSA',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: '知乎',
+          url: 'http://www.zhihu.com'
+        },
+        {
+          id: '2bQo1FJOZSB',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: 'github',
+          url: 'http:/ /www.zhihu.com'
+        },
+        {
+          id: '2bQo1FJOZSC',
+          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+          name: 'youtube',
+          url: 'http://www.zhihu.com'
+        }
+      ],
       isAdd: true,
       url: '',
       containerWidth: 0,
@@ -49,6 +103,14 @@ export default {
     window.addEventListener('resize', () => {
       this.handleResize()
     })
+  },
+  computed: {
+    btnStyle () {
+      return {
+        'grid-row': `${Math.floor(this.tags.length / this.columnNumber) + 1}`,
+        'grid-column': `${this.tags.length % this.columnNumber + 1}`
+      }
+    }
   },
   methods: {
     // 新增tag的弹窗
@@ -83,17 +145,20 @@ export default {
       this.$modal.hide('myModal')
     },
     handleResize: debounce(function (e) {
-      this.containerWidth = this.$refs.container.offsetWidth
+      // $el用来获取当前组件(VUE实例)下的el，因为原生el被覆盖了
+      this.containerWidth = this.$refs.container.$el && this.$refs.container.$el.offsetWidth
       const width = (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
       const height = 0.75 * width
       const fontSize = height / 13
+      const rowNumber = Math.floor(this.tags.length / this.columnNumber) + 2
       this.gridStyle = {
         'grid-template-columns': `repeat(${this.columnNumber}, ${width}px)`,
-        'grid-template-rows': `repeat(3, ${height}px)`
+        'grid-template-rows': `repeat(${rowNumber}, ${height}px)`
       }
       this.fontStyle = {
         'font-size': `${fontSize}px`
       }
+      console.log(this.gridStyle)
     }, 200),
     fetchMetaData () {
       return metascraper(this.url)
@@ -131,5 +196,9 @@ export default {
 }
 .item {
   border-radius: 10px;
+}
+.ghost {
+  opacity: 0.5;
+  background: #c8ebfb;
 }
 </style>
