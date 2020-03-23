@@ -18,6 +18,10 @@
     </Draggable>
     <v-dialog />
     <MyModal @close="closeMyModal"/>
+    <a class="toolbox" @click="openToolbox">
+      <img src="@/assets/tool.svg">
+    </a>
+    <MyDrawer />
   </div>
 </template>
 
@@ -25,6 +29,7 @@
 import { debounce, cloneDeep } from 'lodash'
 import TagItem from '@/components/TagItem.vue'
 import MyModal from '@/components/MyModal.vue'
+import MyDrawer from '@/components/Drawer.vue'
 import metascraper from '@/utils/metascraper.js'
 import Draggable from 'vuedraggable'
 // import VueSlider from 'vue-slider-component'
@@ -40,7 +45,8 @@ export default {
   components: {
     TagItem,
     MyModal,
-    Draggable
+    Draggable,
+    MyDrawer
     // VueSlider
   },
   data: function () {
@@ -95,7 +101,8 @@ export default {
       columnNumber: 4,
       gridStyle: {},
       fontStyle: {},
-      activeTag: {}
+      activeTag: {},
+      exist: false
     }
   },
   mounted () {
@@ -171,6 +178,9 @@ export default {
       const tags = cloneDeep(this.tags)
       const tagIndex = tags.findIndex(tagIdd)
       this.activeTag = tags[tagIndex]
+    },
+    openToolbox () {
+      this.exist = true
     }
   }
 }
@@ -200,5 +210,18 @@ export default {
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
+}
+.toolbox {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, .33);
+    padding: 4px;
+    cursor: pointer;
+    img {
+      height: 20px;
+      width: 20px;
+    }
 }
 </style>
