@@ -81,7 +81,6 @@ export default {
       this.tag.name = res.title
       this.tag.url = this.urlinput
       this.tag.img = res.image
-
       this.titleinput = this.tag.name
     },
     beforeClose (event) {

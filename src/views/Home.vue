@@ -18,9 +18,7 @@
     </Draggable>
     <v-dialog />
     <MyModal @close="closeMyModal"/>
-    <a class="toolbox" @click="openToolbox">
-      <img src="@/assets/tool.svg">
-    </a>
+    <div class="toolbox" @click="openToolbox"></div>
     <MyDrawer />
   </div>
 </template>
@@ -32,8 +30,6 @@ import MyModal from '@/components/MyModal.vue'
 import MyDrawer from '@/components/Drawer.vue'
 import metascraper from '@/utils/metascraper.js'
 import Draggable from 'vuedraggable'
-// import VueSlider from 'vue-slider-component'
-// import 'vue-slider-component/theme/antd.css'
 
 export default {
   name: 'Home',
@@ -47,7 +43,6 @@ export default {
     MyModal,
     Draggable,
     MyDrawer
-    // VueSlider
   },
   data: function () {
     return {
@@ -98,9 +93,9 @@ export default {
       isAdd: true,
       url: '',
       containerWidth: 0,
-      columnNumber: 4,
-      gridStyle: {},
-      fontStyle: {},
+      columnNumber: 6,
+      // gridStyle: {},
+      // fontStyle: {},
       activeTag: {},
       exist: false
     }
@@ -112,6 +107,29 @@ export default {
     })
   },
   computed: {
+    tagWidth () {
+      return (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
+    },
+    tagHeight () {
+      return 0.75 * this.tagWidth
+    },
+    tagFontSize () {
+      return this.tagHeight / 13
+    },
+    tagRowNumber () {
+      return Math.floor(this.tags.length / this.columnNumber) + 2
+    },
+    gridStyle () {
+      return {
+        'grid-template-columns': `repeat(${this.columnNumber}, ${this.tagWidth}px)`,
+        'grid-template-rows': `repeat(${this.tagRowNumber}, ${this.tagHeight}px)`
+      }
+    },
+    fontStyle () {
+      return {
+        'font-size': `${this.tagFontSize}px`
+      }
+    },
     btnStyle () {
       return {
         'grid-row': `${Math.floor(this.tags.length / this.columnNumber) + 1}`,
@@ -154,18 +172,10 @@ export default {
     handleResize: debounce(function (e) {
       // $el用来获取当前组件(VUE实例)下的el，因为原生el被覆盖了
       this.containerWidth = this.$refs.container.$el && this.$refs.container.$el.offsetWidth
-      const width = (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
-      const height = 0.75 * width
-      const fontSize = height / 13
-      const rowNumber = Math.floor(this.tags.length / this.columnNumber) + 2
-      this.gridStyle = {
-        'grid-template-columns': `repeat(${this.columnNumber}, ${width}px)`,
-        'grid-template-rows': `repeat(${rowNumber}, ${height}px)`
-      }
-      this.fontStyle = {
-        'font-size': `${fontSize}px`
-      }
-      console.log(this.gridStyle)
+      // const width = (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
+      // const height = 0.75 * width
+      // const fontSize = height / 13
+      // const rowNumber = Math.floor(this.tags.length / this.columnNumber) + 2
     }, 200),
     fetchMetaData () {
       return metascraper(this.url)
@@ -212,6 +222,7 @@ export default {
   background: #c8ebfb;
 }
 .toolbox {
+    display: block;
     position: absolute;
     right: 0;
     top: 0;
@@ -219,9 +230,13 @@ export default {
     box-shadow: 0 1px 5px rgba(0, 0, 0, .33);
     padding: 4px;
     cursor: pointer;
-    img {
-      height: 20px;
-      width: 20px;
-    }
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #f2f4f6;
+    background-image: url("~@/assets/tool.svg");
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: 50%;
 }
 </style>
