@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" :style="bgStyle">
     <!-- 通过 ref 属性为子组件赋予一个 ID 引用，用来直接从javascript访问这个组件 -->
     <Draggable
       class="container"
@@ -24,12 +24,14 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { debounce, cloneDeep } from 'lodash'
+import Draggable from 'vuedraggable'
+
 import TagItem from '@/components/TagItem.vue'
 import MyModal from '@/components/MyModal.vue'
 import MyDrawer from '@/components/Drawer.vue'
 import metascraper from '@/utils/metascraper.js'
-import Draggable from 'vuedraggable'
 
 export default {
   name: 'Home',
@@ -93,9 +95,7 @@ export default {
       isAdd: true,
       url: '',
       containerWidth: 0,
-      columnNumber: 6,
-      // gridStyle: {},
-      // fontStyle: {},
+      containerHeight: 0,
       activeTag: {},
       exist: false
     }
@@ -107,6 +107,12 @@ export default {
     })
   },
   computed: {
+    ...mapState({
+      bgcolor: state => state.settings.bgcolor,
+      columnNumber: state => state.settings.columnNumber,
+      bgImage: state => state.settings.bgImage,
+      activeTab: state => state.settings.activeTab
+    }),
     tagWidth () {
       return (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
     },
@@ -135,11 +141,21 @@ export default {
         'grid-row': `${Math.floor(this.tags.length / this.columnNumber) + 1}`,
         'grid-column': `${this.tags.length % this.columnNumber + 1}`
       }
+    },
+    bgStyle () {
+      if (this.activeTab === 1) {
+        return {
+          'background-color': `${this.bgcolor}`
+        }
+      }
+      return {
+        backgroundImage: `${this.bgImage}`
+      }
     }
   },
   methods: {
     // 新增tag的弹窗
-    createNewTag () {
+    async createNewTag () {
       this.isAdd = true
       this.$modal.show('myModal')
     },
@@ -169,13 +185,12 @@ export default {
     closeMyModal: function () {
       this.$modal.hide('myModal')
     },
+    // 防抖函数
     handleResize: debounce(function (e) {
       // $el用来获取当前组件(VUE实例)下的el，因为原生el被覆盖了
+      // 先读取offsetWidth，再写入
       this.containerWidth = this.$refs.container.$el && this.$refs.container.$el.offsetWidth
-      // const width = (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
-      // const height = 0.75 * width
-      // const fontSize = height / 13
-      // const rowNumber = Math.floor(this.tags.length / this.columnNumber) + 2
+      this.containerHeight = this.$refs.container.$el && this.$refs.container.$el.offsetHeight
     }, 200),
     fetchMetaData () {
       return metascraper(this.url)
@@ -196,13 +211,15 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .home {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .container {
   display: grid;

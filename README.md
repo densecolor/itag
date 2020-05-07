@@ -1,6 +1,6 @@
 # itag
 
 ```
-This is a Chrome extention unfinished
+This is a google chrome extension plugin to help users save their favorite site info
 ```
 
