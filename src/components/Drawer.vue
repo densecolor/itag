@@ -40,9 +40,10 @@
         <h1>Change Background</h1>
       </div>
       <nav>
-        <ul>
+        <ul class="modal-tab">
           <li
             v-for="item in items"
+            class="modal-tab__item"
             :key="item.id"
             :class="{ active: item.id === activeTab }"
             @click="selectTab(item)"
@@ -227,25 +228,25 @@ aside.drawer{
   nav {
     display: block;
     margin-left: 10px;
-    ul {
+    .modal-tab {
       list-style: none;
       padding: 0px;
       margin-block-start: 1em;
       margin-block-end: 1em;
-      li {
-          display: inline-block;
-          text-decoration: none;
-          padding: 5px;
-          margin: 5px;
-          text-transform: uppercase;
-          cursor: pointer;
-          &:hover {
-            background: #404D5B;
-            color: #F9F7F6;
-          }
-          &.active {
-            border: 2px solid #222;
-          }
+      &__item {
+        display: inline-block;
+        text-decoration: none;
+        padding: 5px;
+        margin: 5px;
+        text-transform: uppercase;
+        cursor: pointer;
+        &:hover {
+          background: #404D5B;
+          color: #F9F7F6;
+        }
+        &.active {
+          border: 2px solid #222;
+        }
       }
     }
   }
