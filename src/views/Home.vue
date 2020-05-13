@@ -10,10 +10,11 @@
       <TagItem
         v-for="tag in tags"
         :key="tag.id"
-        :tag-prop="tag"
         @getTagId="getActiveTag"
         class="item"
+        :tag-prop="tag"
       />
+        <!--  -->
     <button class="btn" @click="createNewTag" :style="btnStyle">+</button>
     </Draggable>
     <v-dialog />
@@ -24,7 +25,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { debounce, cloneDeep } from 'lodash'
 import Draggable from 'vuedraggable'
 
@@ -48,50 +49,57 @@ export default {
   },
   data: function () {
     return {
-      tags: [
-        {
-          id: '2bQo1FJOZSU',
-          img: 'https://gw.alipayobjects.com/zos/rmsportal/xwaMkpycAdwCBrdgyWiT.png',
-          name: '语雀',
-          url: 'http://www.yuque.com'
-        },
-        {
-          id: '2bQo1FJOZSP',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: '知乎',
-          url: 'http://www.zhihu.com'
-        },
-        {
-          id: '2bQo1FJOZSQ',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: 'github',
-          url: 'http:/ /www.zhihu.com'
-        },
-        {
-          id: '2bQo1FJOZSR',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: 'youtube',
-          url: 'http://www.zhihu.com'
-        },
-        {
-          id: '2bQo1FJOZSA',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: '知乎',
-          url: 'http://www.zhihu.com'
-        },
-        {
-          id: '2bQo1FJOZSB',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: 'github',
-          url: 'http:/ /www.zhihu.com'
-        },
-        {
-          id: '2bQo1FJOZSC',
-          img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-          name: 'youtube',
-          url: 'http://www.zhihu.com'
-        }
-      ],
+      // tags: [
+      //   {
+      //     id: '2bQo1FJOZSU',
+      //     img: 'https://gw.alipayobjects.com/zos/rmsportal/xwaMkpycAdwCBrdgyWiT.png',
+      //     name: '语雀',
+      //     url: 'http://www.yuque.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSP',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: '知乎',
+      //     url: 'http://www.zhihu.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSQ',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: 'github',
+      //     url: 'http:/ /www.zhihu.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSR',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: 'youtube',
+      //     url: 'http://www.zhihu.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSA',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: '知乎',
+      //     url: 'http://www.zhihu.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSB',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: 'github',
+      //     url: 'http:/ /www.zhihu.com',
+      //     clickTime: 0
+      //   },
+      //   {
+      //     id: '2bQo1FJOZSC',
+      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
+      //     name: 'youtube',
+      //     url: 'http://www.zhihu.com',
+      //     clickTime: 0
+      //   }
+      // ],
       isAdd: true,
       url: '',
       containerWidth: 0,
@@ -111,7 +119,8 @@ export default {
       bgcolor: state => state.settings.bgcolor,
       columnNumber: state => state.settings.columnNumber,
       bgImage: state => state.settings.bgImage,
-      activeTab: state => state.settings.activeTab
+      activeTab: state => state.settings.activeTab,
+      tags: state => state.settings.tags
     }),
     tagWidth () {
       return (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
@@ -154,6 +163,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions([
+      'updateTags'
+    ]),
     // 新增tag的弹窗
     async createNewTag () {
       this.isAdd = true
@@ -168,8 +180,11 @@ export default {
           {
             title: 'Yes',
             handler: () => {
-              const uid = (element) => element.id === id
-              this.tags.splice(this.tags.findIndex(uid), 1)
+              this.updateTags({
+                type: 'delete',
+                tag: {},
+                id: id
+              })
               this.$modal.hide('dialog')
             }
           },
@@ -182,6 +197,11 @@ export default {
         ]
       })
     },
+    // https://www.baidu.com
+    // updateTags (id) {
+    //   const uid = (element) => element.id === id
+    //   this.$store.state.settings.tags.splice(this.tags.findIndex(uid), 1)
+    // },
     closeMyModal: function () {
       this.$modal.hide('myModal')
     },
@@ -206,6 +226,7 @@ export default {
     },
     openToolbox () {
       this.exist = true
+      console.log(this.$store.state.settings)
     }
   }
 }

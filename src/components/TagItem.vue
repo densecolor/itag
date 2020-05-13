@@ -3,7 +3,8 @@
     <a class="tag__link"
       :href="tagProp.url"
       target="_blank"
-      :style="imgStyle">
+      :style="imgStyle"
+      @click="addClickTime">
       <div class="tag__link--name"
           :style="this.home.fontStyle">
         {{ tagProp.name }}
@@ -20,6 +21,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'TagItem',
   inject: ['home'],
@@ -40,11 +43,18 @@ export default {
   mounted () {
   },
   methods: {
+    ...mapActions([
+      'updateTags'
+    ]),
     deleteTag () {
       this.home.show(this.tagProp.id)
     },
     modifyTag () {
       this.$emit('getTagId', this.tagProp.id)
+    },
+    addClickTime () {
+      this.tagProp.clickTime += 1
+      console.log(this.tagProp.clickTime)
     }
   }
 }

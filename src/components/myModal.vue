@@ -41,6 +41,7 @@
   </modal>
 </template>
 <script>
+import { mapActions } from 'vuex'
 import uuid from 'js-shortid'
 
 export default {
@@ -50,11 +51,7 @@ export default {
     return {
       urlinput: '',
       titleinput: '',
-      tag: {
-        name: '',
-        img: '',
-        url: ''
-      }
+      tag: {}
     }
   },
   watch: {
@@ -71,6 +68,9 @@ export default {
   mounted () {
   },
   methods: {
+    ...mapActions([
+      'updateTags'
+    ]),
     // beforeOpen (event) {
     //   this.tag = this.home.activeTag
     //   this.urlinput = this.home.activeTag.url
@@ -80,9 +80,17 @@ export default {
       this.tag.id = uuid.gen()
       this.tag.url = this.urlinput
       this.tag.name = this.titleinput
-      this.home.tags.push(this.tag)
+      this.updateTags({
+        type: 'add',
+        tag: this.tag,
+        id: ''
+      })
       this.home.closeMyModal()
     },
+    // updateTags () {
+    //   this.$store.state.settings.tags.push(this.tag)
+    //   console.log(this.$store.state.settings.tags)
+    // },
     async urlBlur () {
       this.home.url = this.urlinput
       const res = await this.home.fetchMetaData()
