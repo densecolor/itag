@@ -22,7 +22,7 @@ export default new Vuex.Store({
       Object.assign(state.settings, payload)
     },
     [types.UPDATE_COLOR] (state, payload) {
-      state.settings.bgcolor = payload.bgcolor
+      state.settings.bgcolor = payload
     },
     [types.UPDATE_COLUMN] (state, payload) {
       state.settings.columnNumber = payload

@@ -96,9 +96,7 @@ export default {
       console.log(res)
     },
     selectPicture (picture) {
-      this.updatePattern({
-        bgImage: `url(${picture.largeImage})`
-      })
+      this.updatePattern(`url(${picture.largeImage})`)
     },
     changePage (pageNumber) {
       pageNumber = this.pageNumber

@@ -146,14 +146,10 @@ export default {
     selectTab (item) {
       this.activeTab = item.id
       // this.home.activeTab = item.id
-      this.updateActiveTab({
-        activeTab: this.activeTab
-      })
+      this.updateActiveTab(this.activeTab)
     },
     updateColumnNumber () {
-      this.updateColumn({
-        columnNumber: this.value
-      })
+      this.updateColumn(this.value)
     }
   }
 }

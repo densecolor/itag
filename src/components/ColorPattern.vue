@@ -108,9 +108,7 @@ export default {
     },
     getTrianglifyMethod () {
       this.patternResult = getTrianglify(this.reqColor, this.valueVariance, this.valueCell)
-      this.updatePattern({
-        bgImage: this.patternResult
-      })
+      this.updatePattern(this.patternResult)
     }
   }
 }

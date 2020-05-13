@@ -1,7 +1,7 @@
 // Mutation Types
 export const SET_SETTINGS = 'SET_SETTINGS'
 export const UPDATE_COLOR = 'UPDATE_COLOR'
-export const UPDATE_COLUMN = 'UPDATE_COLOR'
+export const UPDATE_COLUMN = 'UPDATE_COLUMN'
 export const UPDATE_PATTERN = 'UPDATE_PATTERN'
 export const UPDATE_ACTIVE_TAB = 'UPDATE_ACTIVE_TAB'
 export const UPDATE_TAGS = 'UPDATE_TAGS'

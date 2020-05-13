@@ -23,9 +23,7 @@ export default {
       'updateColor'
     ]),
     updateColorValue () {
-      this.updateColor({
-        bgcolor: this.colors.hex
-      })
+      this.updateColor(this.colors.hex)
     }
   }
 }
