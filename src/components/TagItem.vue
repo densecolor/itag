@@ -5,8 +5,7 @@
       target="_blank"
       :style="imgStyle"
       @click="addClickTime">
-      <div class="tag__link--name"
-          :style="this.home.fontStyle">
+      <div class="tag__link--name" :style="this.home.fontStyle">
         {{ tagProp.name }}
       </div>
     </a>
@@ -17,11 +16,11 @@
       <img src="@/assets/edit.svg">
     </a>
   </div>
-
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'TagItem',
@@ -31,9 +30,13 @@ export default {
   },
   data () {
     return {
+      activeTag: {}
     }
   },
   computed: {
+    ...mapState({
+      tags: state => state.settings.tags
+    }),
     imgStyle () {
       return {
         'background-image': `url(${this.tagProp.img})`
@@ -44,13 +47,21 @@ export default {
   },
   methods: {
     ...mapActions([
-      'updateTags'
+      'updateTags',
+      'setActiveTag'
     ]),
     deleteTag () {
-      this.home.show(this.tagProp.id)
+      this.home.showDelete(this.tagProp.id)
     },
     modifyTag () {
-      this.$emit('getTagId', this.tagProp.id)
+      this.home.isAdd = false
+      this.$modal.show('myModal')
+      const tagIdd = (element) => element.id === this.tagProp.id
+      // 使用深拷贝解决对象引用问题
+      const tags = cloneDeep(this.tags)
+      const tagIndex = tags.findIndex(tagIdd)
+      this.activeTag = tags[tagIndex]
+      this.setActiveTag(this.activeTag)
     },
     addClickTime () {
       this.tagProp.clickTime += 1

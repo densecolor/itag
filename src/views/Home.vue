@@ -10,12 +10,10 @@
       <TagItem
         v-for="tag in tags"
         :key="tag.id"
-        @getTagId="getActiveTag"
         class="item"
         :tag-prop="tag"
       />
-        <!--  -->
-    <button class="btn" @click="createNewTag" :style="btnStyle">+</button>
+      <button class="btn" @click="createNewTag" :style="btnStyle">+</button>
     </Draggable>
     <v-dialog />
     <MyModal @close="closeMyModal"/>
@@ -26,7 +24,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { debounce, cloneDeep } from 'lodash'
+import { debounce } from 'lodash'
 import Draggable from 'vuedraggable'
 
 import TagItem from '@/components/TagItem.vue'
@@ -49,59 +47,7 @@ export default {
   },
   data: function () {
     return {
-      // tags: [
-      //   {
-      //     id: '2bQo1FJOZSU',
-      //     img: 'https://gw.alipayobjects.com/zos/rmsportal/xwaMkpycAdwCBrdgyWiT.png',
-      //     name: '语雀',
-      //     url: 'http://www.yuque.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSP',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: '知乎',
-      //     url: 'http://www.zhihu.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSQ',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: 'github',
-      //     url: 'http:/ /www.zhihu.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSR',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: 'youtube',
-      //     url: 'http://www.zhihu.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSA',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: '知乎',
-      //     url: 'http://www.zhihu.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSB',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: 'github',
-      //     url: 'http:/ /www.zhihu.com',
-      //     clickTime: 0
-      //   },
-      //   {
-      //     id: '2bQo1FJOZSC',
-      //     img: 'https://pic4.zhimg.com/80/v2-a47051e92cf74930bedd7469978e6c08_hd.png',
-      //     name: 'youtube',
-      //     url: 'http://www.zhihu.com',
-      //     clickTime: 0
-      //   }
-      // ],
       isAdd: true,
-      url: '',
       containerWidth: 0,
       containerHeight: 0,
       activeTag: {},
@@ -120,7 +66,8 @@ export default {
       columnNumber: state => state.settings.columnNumber,
       bgImage: state => state.settings.bgImage,
       activeTab: state => state.settings.activeTab,
-      tags: state => state.settings.tags
+      tags: state => state.settings.tags,
+      activeTag: state => state.activeTag
     }),
     tagWidth () {
       return (this.containerWidth - (this.columnNumber - 1) * 20) / this.columnNumber
@@ -167,12 +114,12 @@ export default {
       'updateTags'
     ]),
     // 新增tag的弹窗
-    async createNewTag () {
+    createNewTag () {
       this.isAdd = true
       this.$modal.show('myModal')
     },
     // 删除确认框
-    show (id) {
+    showDelete (id) {
       this.$modal.show('dialog', {
         title: 'Confirm',
         text: 'Are you sure to delete this card?',
@@ -180,10 +127,12 @@ export default {
           {
             title: 'Yes',
             handler: () => {
+              const uid = (element) => element.id === id
+              const index = this.tags.findIndex(uid)
               this.updateTags({
                 type: 'delete',
                 tag: {},
-                id: id
+                index: index
               })
               this.$modal.hide('dialog')
             }
@@ -197,11 +146,6 @@ export default {
         ]
       })
     },
-    // https://www.baidu.com
-    // updateTags (id) {
-    //   const uid = (element) => element.id === id
-    //   this.$store.state.settings.tags.splice(this.tags.findIndex(uid), 1)
-    // },
     closeMyModal: function () {
       this.$modal.hide('myModal')
     },
@@ -213,16 +157,7 @@ export default {
       this.containerHeight = this.$refs.container.$el && this.$refs.container.$el.offsetHeight
     }, 200),
     fetchMetaData () {
-      return metascraper(this.url)
-    },
-    getActiveTag (tagId) {
-      this.isAdd = false
-      this.$modal.show('myModal')
-      const tagIdd = (element) => element.id === tagId
-      // 使用深拷贝解决对象引用问题
-      const tags = cloneDeep(this.tags)
-      const tagIndex = tags.findIndex(tagIdd)
-      this.activeTag = tags[tagIndex]
+      return metascraper(this.activeTag.url)
     },
     openToolbox () {
       this.exist = true

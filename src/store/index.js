@@ -15,6 +15,12 @@ export default new Vuex.Store({
       bgImage: '',
       activeTab: 1,
       tags: []
+    },
+    activeTag: {
+      id: '',
+      url: '',
+      img: '',
+      name: ''
     }
   },
   mutations: {
@@ -33,18 +39,28 @@ export default new Vuex.Store({
     [types.UPDATE_ACTIVE_TAB] (state, payload) {
       state.settings.activeTab = payload
     },
-    [types.UPDATE_TAGS] (state, { type, tag, id }) {
+    [types.UPDATE_TAGS] (state, { type, tag, index }) {
       switch (type) {
         case 'add':
           state.settings.tags.push(tag)
           break
         case 'delete':
-          var uid = (element) => element.id === id
-          state.settings.tags.splice(state.settings.tags.findIndex(uid), 1)
+          state.settings.tags.splice(index, 1)
+          break
+        case 'modify':
+          state.settings.tags.splice(index, 1, tag)
           break
         default:
           break
       }
+    },
+    [types.SET_ACTIVE_TAG] (state, payload = {
+      id: '',
+      url: '',
+      img: '',
+      name: ''
+    }) {
+      state.activeTag = payload
     }
   },
   actions,

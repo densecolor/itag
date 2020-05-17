@@ -6,6 +6,7 @@
     height="auto"
     :delay="100"
     :draggable="true"
+    @opened="opened"
     @before-close="beforeClose">
     <div class="header">
       <a class="cancel" @click="home.closeMyModal()">
@@ -16,103 +17,79 @@
     </div>
     <h3>Input URL</h3>
     <input
-      v-model="urlinput"
+      v-model="tag.url"
       @blur="urlBlur"
       @keyup.enter="urlBlur"
       required
     />
     <h3>Input Title</h3>
-    <input v-model="titleinput" required/>
+    <input v-model="tag.name" required/>
     <h3>Choose a logo</h3>
     <img class="tagImg" :src="tag.img" />
     <div class="two-button">
       <button class="cancelButton" @click="$emit('close')">Cancel</button>
-      <button
-      class="saveButton"
-      v-if="home.isAdd"
-      @click="addNewTag"
-      >Confirm</button>
-      <button
-      class="saveButton"
-      v-else
-      @click="modifyTag"
-      >Confirm</button>
+      <button class="saveButton" v-if="home.isAdd" @click="addNewTag">Confirm</button>
+      <button class="saveButton" v-else @click="modifyTag">Confirm</button>
     </div>
   </modal>
 </template>
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import uuid from 'js-shortid'
+import { cloneDeep } from 'lodash'
 
 export default {
   name: 'MyModal',
   inject: ['home'],
   data () {
     return {
-      urlinput: '',
-      titleinput: '',
-      tag: {}
-    }
-  },
-  watch: {
-    'home.isAdd': {
-      handler (newVal) {
-        if (!newVal) {
-          this.tag = this.home.activeTag
-          this.urlinput = this.home.activeTag.url
-          this.titleinput = this.home.activeTag.name
-        }
+      tag: {
+        id: '',
+        url: '',
+        img: '',
+        name: ''
       }
     }
   },
-  mounted () {
+  computed: {
+    ...mapState({
+      activeTag: state => state.activeTag
+    })
   },
   methods: {
     ...mapActions([
-      'updateTags'
+      'updateTags',
+      'setActiveTag'
     ]),
-    // beforeOpen (event) {
-    //   this.tag = this.home.activeTag
-    //   this.urlinput = this.home.activeTag.url
-    //   this.titleinput = this.home.activeTag.name
-    // },
     addNewTag () {
       this.tag.id = uuid.gen()
-      this.tag.url = this.urlinput
-      this.tag.name = this.titleinput
       this.updateTags({
         type: 'add',
         tag: this.tag,
-        id: ''
+        index: ''
       })
       this.home.closeMyModal()
     },
-    // updateTags () {
-    //   this.$store.state.settings.tags.push(this.tag)
-    //   console.log(this.$store.state.settings.tags)
-    // },
     async urlBlur () {
-      this.home.url = this.urlinput
       const res = await this.home.fetchMetaData()
       this.tag.name = res.title
-      this.tag.url = this.urlinput
       this.tag.img = res.image
-      this.titleinput = this.tag.name
+    },
+    opened (event) {
+      const t = cloneDeep(this.activeTag)
+      this.tag = t
     },
     beforeClose (event) {
-      this.urlinput = ''
-      this.titleinput = ''
-      this.tag = {
-        name: '',
-        img: '',
-        url: ''
-      }
+      this.setActiveTag()
     },
-    // http://www.yuque.com
     modifyTag () {
-      const tagIdd = (element) => element.id === this.home.activeTag.id
+      const tagIdd = (element) => element.id === this.tag.id
       const tagIndex = this.home.tags.findIndex(tagIdd)
-      this.home.tags.splice(tagIndex, 1, this.tag)
+      this.updateTags({
+        type: 'modify',
+        tag: this.tag,
+        index: tagIndex
+      })
       this.home.closeMyModal()
     }
   }
