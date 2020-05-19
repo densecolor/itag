@@ -23,6 +23,10 @@
           <label class="drawer_body_item_label">Background:</label>
           <button class="background_icon" @click="showBg"></button>
         </div>
+        <div class="drawer_body_item">
+          <label class="drawer_body_item_label">Statistic:</label>
+          <button class="statistic_icon" @click="showChart"></button>
+        </div>
       </div>
       <div class="drawer_footer"></div>
     </aside>
@@ -60,13 +64,30 @@
         <button class="saveButton">Save</button>
       </div>
     </modal>
+    <modal
+      class="chart-modal my-modal"
+      name="chartModal"
+      transition="nice-modal-fade"
+      height="auto"
+      :delay="100">
+      <div class="header">
+        <a class="cancel" @click="closeBgModal">
+          <img src="@/assets/cancel.svg">
+        </a>
+        <h1>Statistic Chart</h1>
+      </div>
+      <ve-pie-chart
+        :data="chartData"
+        :settings="chartSettings"
+      />
+    </modal>
   </section>
 </template>
 
 <script>
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 import ColorPick from '@/components/ColorPick.vue'
 import ColorPattern from '@/components/ColorPattern.vue'
@@ -82,6 +103,9 @@ export default {
     ColorPicture
   },
   computed: {
+    ...mapState({
+      tags: state => state.settings.tags
+    }),
     drawerStyle: function () {
       if (this.home.exist === true) {
         return 'transform:translate3d(0,0,0);right:0;transition-duration: .3s;'
@@ -125,7 +149,14 @@ export default {
           name: 'Picture',
           component: ColorPicture
         }
-      ]
+      ],
+      chartSettings: {
+        roseType: 'area',
+        radius: [30, 110]
+      },
+      chartData: {},
+      website: [],
+      clickTimes: []
     }
   },
   methods: {
@@ -142,14 +173,33 @@ export default {
     },
     closeBgModal () {
       this.$modal.hide('bgModal')
+      this.$modal.hide('chartModal')
     },
     selectTab (item) {
       this.activeTab = item.id
-      // this.home.activeTab = item.id
       this.updateActiveTab(this.activeTab)
     },
     updateColumnNumber () {
       this.updateColumn(this.value)
+    },
+    showChart () {
+      this.$modal.show('chartModal')
+      this.website = this.tags.map(obj => {
+        return obj.name
+      })
+      this.clickTimes = this.tags.map(obj => {
+        return obj.clickTime
+      })
+      this.chartData = {
+        dimensions: {
+          name: 'website',
+          data: this.website
+        },
+        measures: [{
+          name: 'clickTime',
+          data: this.clickTimes
+        }]
+      }
     }
   }
 }
@@ -193,6 +243,20 @@ aside.drawer{
     height: 40px;
     width: 40px;
     background-color: #ccc;
+    cursor: pointer;
+    outline: none;
+  }
+  .statistic_icon {
+    height: 40px;
+    width: 40px;
+    background-image: url("~@/assets/chart.svg");
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-color: #222;
+    border: 0;
+    cursor: pointer;
+    outline: none;
   }
 }
 .drawer_body_item_label {

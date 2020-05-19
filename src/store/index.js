@@ -20,7 +20,8 @@ export default new Vuex.Store({
       id: '',
       url: '',
       img: '',
-      name: ''
+      name: '',
+      clickTime: 0
     }
   },
   mutations: {
@@ -49,6 +50,9 @@ export default new Vuex.Store({
           break
         case 'modify':
           state.settings.tags.splice(index, 1, tag)
+          break
+        case 'addTimes':
+          state.settings.tags[index].clickTime += 1
           break
         default:
           break

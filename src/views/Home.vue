@@ -12,6 +12,7 @@
         :key="tag.id"
         class="item"
         :tag-prop="tag"
+        @addClickTime="addClickTime(tag)"
       />
       <button class="btn" @click="createNewTag" :style="btnStyle">+</button>
     </Draggable>
@@ -50,7 +51,6 @@ export default {
       isAdd: true,
       containerWidth: 0,
       containerHeight: 0,
-      activeTag: {},
       exist: false
     }
   },
@@ -161,7 +161,16 @@ export default {
     },
     openToolbox () {
       this.exist = true
-      console.log(this.$store.state.settings)
+    },
+    addClickTime (tag) {
+      const uid = (element) => element.id === tag.id
+      const index = this.tags.findIndex(uid)
+      this.updateTags({
+        type: 'addTimes',
+        tag: tag,
+        index: index
+      })
+      console.log(tag.clickTime)
     }
   }
 }

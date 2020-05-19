@@ -4,7 +4,7 @@
       :href="tagProp.url"
       target="_blank"
       :style="imgStyle"
-      @click="addClickTime">
+      @click="$emit('addClickTime')">
       <div class="tag__link--name" :style="this.home.fontStyle">
         {{ tagProp.name }}
       </div>
@@ -36,6 +36,7 @@ export default {
   computed: {
     ...mapState({
       tags: state => state.settings.tags
+      // activeTag: state => state.activeTag
     }),
     imgStyle () {
       return {
@@ -62,10 +63,6 @@ export default {
       const tagIndex = tags.findIndex(tagIdd)
       this.activeTag = tags[tagIndex]
       this.setActiveTag(this.activeTag)
-    },
-    addClickTime () {
-      this.tagProp.clickTime += 1
-      console.log(this.tagProp.clickTime)
     }
   }
 }

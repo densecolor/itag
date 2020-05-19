@@ -4,11 +4,14 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import VModal from 'vue-js-modal'
+import VeCharts from 've-charts'
 
 Vue.use(VModal, {
   dialog: true,
   dynamic: true
 })
+
+Vue.use(VeCharts)
 
 Vue.config.productionTip = false
 

@@ -36,7 +36,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import uuid from 'js-shortid'
-import { cloneDeep } from 'lodash'
+// import { cloneDeep } from 'lodash'
 
 export default {
   name: 'MyModal',
@@ -47,7 +47,8 @@ export default {
         id: '',
         url: '',
         img: '',
-        name: ''
+        name: '',
+        clickTime: 0
       }
     }
   },
@@ -76,8 +77,8 @@ export default {
       this.tag.img = res.image
     },
     opened (event) {
-      const t = cloneDeep(this.activeTag)
-      this.tag = t
+      // const t = cloneDeep(this.activeTag)
+      this.tag = this.activeTag
     },
     beforeClose (event) {
       this.setActiveTag()
