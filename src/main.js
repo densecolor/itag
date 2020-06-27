@@ -15,6 +15,8 @@ Vue.use(VeCharts)
 
 Vue.config.productionTip = false
 
+Vue.prototype.$gapi = window.gapi
+
 new Vue({
   router,
   store,

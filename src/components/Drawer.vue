@@ -27,6 +27,12 @@
           <label class="drawer_body_item_label">Statistic:</label>
           <button class="statistic_icon" @click="showChart"></button>
         </div>
+        <div class="drawer_body_item">
+          <label class="drawer_body_item_google">Async your data :</label>
+          <button class="google_icon" @click="handleSignInClick"></button>
+          <label class="drawer_body_item_google">Sign out :</label>
+          <button class="google_icon" @click="handleSignOutClick"></button>
+        </div>
       </div>
       <div class="drawer_footer"></div>
     </aside>
@@ -159,6 +165,9 @@ export default {
       clickTimes: []
     }
   },
+  mounted () {
+    this.handleClientLoad()
+  },
   methods: {
     ...mapActions([
       'updateColumn',
@@ -200,6 +209,51 @@ export default {
           data: this.clickTimes
         }]
       }
+    },
+    initClient () {
+      const API_KEY = 'AIzaSyCeUNfKsZYbRD2ML2sjbmiK3abw2T-OzYU'
+      const CLIENT_ID = '557562562449-nhg2llks2cer1gde12gl5u2nefijpiut.apps.googleusercontent.com'
+      const SCOPE = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/spreadsheets'
+      const that = this
+      this.$gapi.client.init({
+        apiKey: API_KEY,
+        clientId: CLIENT_ID,
+        scope: SCOPE,
+        discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4']
+      }).then(function () {
+        // Listen for sign-in state changes.
+        that.$gapi.auth2.getAuthInstance().isSignedIn.listen(that.updateSignInStatus)
+        // Handle the initial sign-in state.
+        that.updateSignInStatus(that.$gapi.auth2.getAuthInstance().isSignedIn.get())
+      })
+    },
+    // Load the API client and auth2 library
+    handleClientLoad () {
+      this.$gapi.load('client:auth2', this.initClient)
+    },
+    handleSignInClick (event) {
+      this.$gapi.auth2.getAuthInstance().signIn()
+    },
+    handleSignOutClick (event) {
+      this.$gapi.auth2.getAuthInstance().signOut()
+    },
+    updateSignInStatus (isSignedIn) {
+      console.log(isSignedIn)
+      if (isSignedIn) {
+        this.makeApiCall()
+      }
+    },
+    // Load the API and make an API call.  Display the results on the screen.
+    makeApiCall () {
+      var spreadsheetBody = {
+      }
+
+      var request = this.$gapi.client.sheets.spreadsheets.create({}, spreadsheetBody)
+      request.then(function (response) {
+        console.log(response.result)
+      }, function (reason) {
+        console.error('error: ' + reason.result.error.message)
+      })
     }
   }
 }
@@ -243,6 +297,13 @@ aside.drawer{
     height: 40px;
     width: 40px;
     background-color: #ccc;
+    cursor: pointer;
+    outline: none;
+  }
+  .google_icon {
+    height: 40px;
+    width: 40px;
+    background-color: rgb(143, 229, 169);
     cursor: pointer;
     outline: none;
   }

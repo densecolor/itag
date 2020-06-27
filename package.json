@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
+    "serve": "vue-cli-service build --mode development --watch",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
@@ -13,6 +14,7 @@
     "dns": "^0.2.2",
     "dotenv": "^8.2.0",
     "echarts": "^4.7.0",
+    "googleapis": "^39.2.0",
     "js-shortid": "^0.1.1",
     "lodash": "^4.17.15",
     "metascraper": "^5.11.6",
@@ -35,7 +37,8 @@
     "vue-smooth-dnd": "^0.8.1",
     "vuedraggable": "^2.23.2",
     "vuex": "^3.1.2",
-    "vuex-persistedstate": "^2.7.1"
+    "vuex-persistedstate": "^2.7.1",
+    "yuque-auth": "^1.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",
@@ -53,13 +56,15 @@
     "eslint-plugin-vue": "^6.1.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
+    "vue-cli-plugin-browser-extension": "^0.24.0",
     "vue-template-compiler": "^2.6.11",
     "webpack": "^4.43.0"
   },
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "webextensions": true
     },
     "extends": [
       "plugin:vue/essential",

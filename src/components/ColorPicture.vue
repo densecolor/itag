@@ -31,7 +31,6 @@
 <script>
 import { mapActions } from 'vuex'
 import Pagination from 'vue-pagination-2'
-
 import getImageInfo from '@/utils/pixabay.js'
 
 export default {

@@ -28,6 +28,7 @@
     <img class="tagImg" :src="tag.img" />
     <div class="two-button">
       <button class="cancelButton" @click="$emit('close')">Cancel</button>
+      <!-- <button class="cancelButton" @click="ttt">test</button> -->
       <button class="saveButton" v-if="home.isAdd" @click="addNewTag">Confirm</button>
       <button class="saveButton" v-else @click="modifyTag">Confirm</button>
     </div>
@@ -62,6 +63,10 @@ export default {
       'updateTags',
       'setActiveTag'
     ]),
+    ttt () {
+      console.log(browser.runtime)
+      browser.runtime.sendMessage({})
+    },
     addNewTag () {
       this.tag.id = uuid.gen()
       this.updateTags({
