@@ -16,7 +16,7 @@
     "echarts": "^4.7.0",
     "googleapis": "^39.2.0",
     "js-shortid": "^0.1.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "metascraper": "^5.11.6",
     "metascraper-image": "^5.11.6",
     "metascraper-logo": "^5.11.6",
